@@ -22,17 +22,20 @@ import java.util.Optional;
 public class ProductService {
 
     // TODO: Declare a private final ProductRepository field
+    private final ProductRepository repository;
 
 
-    // TODO: Constructor that takes ProductRepository as parameter (constructor injection)
-
+    // TODO: Constructor that takes ProductRepository as parameter (constructor injection) 
+    public ProductService(ProductRepository repository) {
+        this.repository = repository;
+    }
 
     /**
      * Get all products.
      */
     public List<Product> getAllProducts() {
         // TODO: Delegate to repository
-        return null;
+       return repository.findAll();
     }
 
     /**
@@ -41,7 +44,14 @@ public class ProductService {
      */
     public Optional<Product> getProductById(Long id) {
         // TODO: Delegate to repository
-        return Optional.empty();
+        // checks if product exists by calling existsById() method
+       if(repository.existsById(id)) {
+            return repository.findById(id);
+       } else {
+        // not found - return empty optional
+            return Optional.empty();
+       }
+
     }
 
     /**
@@ -50,7 +60,9 @@ public class ProductService {
      */
     public Product createProduct(Product product) {
         // TODO: Delegate to repository
-        return null;
+        // saves to the repository and returns the saved product
+        repository.save(product);
+        return product;
     }
 
     /**
@@ -64,7 +76,23 @@ public class ProductService {
         // TODO: If found, update its name, category, price, and quantity
         // TODO: Save and return the updated product
         // TODO: If not found, return Optional.empty()
-        return Optional.empty();
+        // finds the existing product by ID using the repository
+        Optional<Product> existingProdOpt = repository.findById(id);
+        // if found, update its field and save
+        if(existingProdOpt.isPresent()) {
+            Product existingProd = existingProdOpt.get();
+            existingProd.setName(updated.getName());
+            existingProd.setCategory(updated.getCategory());
+            existingProd.setPrice(updated.getPrice());
+            existingProd.setCategory(updated.getCategory());
+            existingProd.setQuantity(updated.getQuantity());
+            repository.save(existingProd);
+            // return product wrapped in Optional
+            return Optional.of(existingProd);
+        } else {
+            // return empty
+            return Optional.empty();
+        }
     }
 
     /**
@@ -73,6 +101,12 @@ public class ProductService {
      */
     public boolean deleteProduct(Long id) {
         // TODO: Delegate to repository
-        return false;
+       Optional<Product> existingProdOpt = repository.findById(id);
+         if(existingProdOpt.isPresent()) {
+            repository.deleteById(id);
+            return true;
+         } else {
+            return false;
+         }
     }
 }

@@ -28,10 +28,14 @@ import java.util.List;
 public class ProductController {
 
     // TODO: Declare a private final ProductService field
+        private final ProductService service;
 
 
     // TODO: Constructor that takes ProductService as parameter
-
+    public ProductController(ProductService service) {
+        this.service = service;
+    }
+        
 
     /**
      * GET /api/products
@@ -40,8 +44,10 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
         // TODO: Implement
-        return null;
+        return ResponseEntity.ok(service.getAllProducts());
     }
+
+    
 
     /**
      * GET /api/products/{id}
@@ -51,7 +57,7 @@ public class ProductController {
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
         // TODO: Implement
         // Hint: use .map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build())
-        return null;
+       return service.getProductById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     /**
@@ -62,7 +68,7 @@ public class ProductController {
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         // TODO: Implement
         // Hint: use ResponseEntity.status(HttpStatus.CREATED).body(...)
-        return null;
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.createProduct(product));
     }
 
     /**
@@ -72,7 +78,7 @@ public class ProductController {
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
         // TODO: Implement
-        return null;
+        return service.updateProduct(id, product).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     /**
@@ -83,6 +89,10 @@ public class ProductController {
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         // TODO: Implement
         // Hint: return ResponseEntity.noContent().build() for success
-        return null;
+        if(service.deleteProduct(id)) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
