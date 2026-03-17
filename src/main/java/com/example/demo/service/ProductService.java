@@ -109,4 +109,13 @@ public class ProductService {
             return false;
          }
     }
+
+    public List<Product> searchProductsByKeyword(String keyword) {
+        return repository.findByNameContaining(keyword);
+
+    }
+
+    public List<Product> searchByCategory(String category) {
+        return repository.findByCategory(category);
+    }
 }

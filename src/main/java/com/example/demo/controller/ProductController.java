@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
+
 /**
  * ProductController — REST API endpoints for products.
  *
@@ -53,7 +55,7 @@ public class ProductController {
      * GET /api/products/{id}
      * Return the product with status 200, or 404 if not found.
      */
-    @GetMapping("/{id}")
+    @GetMapping("getProductById/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
         // TODO: Implement
         // Hint: use .map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build())
@@ -64,7 +66,7 @@ public class ProductController {
      * POST /api/products
      * Create a new product. Return it with status 201 Created.
      */
-    @PostMapping
+    @PostMapping("/createProduct")
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         // TODO: Implement
         // Hint: use ResponseEntity.status(HttpStatus.CREATED).body(...)
@@ -75,7 +77,7 @@ public class ProductController {
      * PUT /api/products/{id}
      * Update an existing product. Return 200 with updated product, or 404 if not found.
      */
-    @PutMapping("/{id}")
+    @PutMapping("updateProduct/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
         // TODO: Implement
         return service.updateProduct(id, product).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
@@ -85,7 +87,7 @@ public class ProductController {
      * DELETE /api/products/{id}
      * Delete a product. Return 204 No Content if deleted, 404 if not found.
      */
-    @DeleteMapping("/{id}")
+    @DeleteMapping("deleteProduct/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         // TODO: Implement
         // Hint: return ResponseEntity.noContent().build() for success
@@ -95,4 +97,19 @@ public class ProductController {
             return ResponseEntity.notFound().build();
         }
     }
+// ⦁	GET /api/products/search?keyword=laptop — returns matching products as JSON with 200
+
+    @GetMapping("search")
+    public ResponseEntity<List<Product>> searchProductsByKeyword(@RequestParam String keyword) {
+        return ResponseEntity.ok(service.searchProductsByKeyword(keyword));
+    }
+
+    @GetMapping("category/{category}")
+    public ResponseEntity<List<Product>> getProductsByCategory(@PathVariable String category) {
+        return ResponseEntity.ok(service.searchByCategory(category));
+    }
+    
+
+    
+    
 }
